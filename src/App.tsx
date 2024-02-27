@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { initialDispatch } from "./helperfns/initialDispatch";
 import { timeout } from "./helperfns/timeout";
 
-export const userContext = createContext();
+export const userContext = createContext(null);
 
 function App() {
   const dispatch = useDispatch();
