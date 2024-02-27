@@ -1,0 +1,98 @@
+$ghFontColor : #ffffffe0
+
+body
+    margin: 0
+    font-family: 'Open Sans', sans-serif
+    font-size: 14px
+    letter-spacing: 2px
+    line-height: 1.8
+    overflow: hidden
+
+.App
+    position: relative
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    min-height: 100vh
+    height: fit-content
+    gap: 50px
+    background-color: #141414
+
+.input_container
+    position: absolute
+    width: fit-content
+    scale: 1
+    opacity: 1
+    transition: scale .7s, opacity 1s
+
+    &.mount
+        scale: 10
+        opacity: 0
+
+    &.unmount
+        scale: .1
+        opacity: 0
+
+.input_component
+    position: relative
+    background-color: transparent
+    z-index: 2
+
+.ghUsername_input
+    width: 340px
+    height: 40px
+    border: solid 1px white
+    border-radius: 8px
+    color: $ghFontColor
+    background-color: rgb(32, 32, 32)
+    font-size: 20px
+    cursor: default
+    transition: padding-left .3s
+
+    &::placeholder
+        text-align: center
+        color: $ghFontColor
+        font-size: 16px
+    
+    &:focus
+        outline: none
+        padding-left: 50px
+
+        &::placeholder
+            color: transparent
+
+    &.focus
+        padding-left: 50px
+
+.clear_input
+    position: absolute
+    top: 12px
+    right: 10px
+    background: none
+    border: none
+    color: $ghFontColor
+    transition: color .2s
+
+    &:hover
+        color: #ffffffb9
+
+    &:active
+        color: #ffffff88
+
+.error
+    width: 100%
+    padding: 10px 0px
+    color: $ghFontColor
+    text-align: center
+    transform: translateY(-48px)
+    transition: transform .3s
+    
+    &.display
+        transform: translateY(0px)
+
+.progress_comp
+    position: absolute
+    top: 50px
+    left: 45%
+    color: rgb(199, 199, 199)
