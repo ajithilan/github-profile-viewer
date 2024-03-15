@@ -1,13 +1,21 @@
 import { intervalCycle } from "./intervalCycle";
+//@ts-ignore
 import {updateRepoRandomValue} from "../ReduxStore/Userslice"
+import { RepoDetails, params } from "../types";
 
-export function repoToggle(param, repoID){
-    const { reposelector, repoDetails, timer } = param;
-    
-    function callInterval(obj, key, firstBatch){
-      const repokeystopass = Object.keys(obj);
-      intervalCycle(param, updateRepoRandomValue, 'repo', reposelector, key, repokeystopass, true, firstBatch);
+export function repoToggle(param:params, repoDetails: RepoDetails, repoID:string|undefined){
+    const {reposelector, timer} = param;
+    if(repoID && !reposelector[repoID].hypered){
+      const repokeystopass = Object.keys(repoDetails);
+      intervalCycle(param, {
+        method:updateRepoRandomValue,
+        type:'repo',
+        selector:reposelector,
+        keys:repoID,
+        subkey:repokeystopass,
+        repoDetail:true,
+        firstBatch:false
+      });
     }
-    !reposelector[repoID].hypered && callInterval(repoDetails, repoID, false);
     timer.current = 0;
   }

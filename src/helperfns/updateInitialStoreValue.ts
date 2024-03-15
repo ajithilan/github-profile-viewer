@@ -1,9 +1,11 @@
+import { UserData, RepoData, RepoDetails } from "../types";
 
-export const updateInitialStoreValue = (type : string, apiResponse, repoDetails)=>{
-  type RD = {
-    [key : string] : string | Boolean
-  }
-  const userData : RD = {
+type ApiResponse = ApiEntry | ApiEntry[];
+
+type ApiEntry = {[key:string]:string|number|boolean|null};
+
+export const updateInitialStoreValue = (apiResponse: ApiResponse, repoDetails: RepoDetails)=>{
+  const userData = {
       avatar_url:'',
       name:'',
       login:'',
@@ -15,29 +17,31 @@ export const updateInitialStoreValue = (type : string, apiResponse, repoDetails)
       public_gists:'',
       public_repos:''
     }
-  const repoData : RD = {
+  const repoData = {
       semiHypered:false,
       node_id:'',
       name:'',
       language:'',
       ...repoDetails
     }
-  const newuserdata = {...userData};
+  const newuserdata : UserData = {...userData};
   let repoArr;
-  let i;
+  let i:string;
+  const isArr = Array.isArray(apiResponse);
   
-  function storeapidata(data : RD, res){
+  function storeapidata(data:{[key:string]:any}, res:ApiEntry){
     for(i in data){
       data[i] = (i === 'semiHypered' || i === 'hypered') ? false : res[i];
     }
     return data
   }
-  if(type === 'main') storeapidata(newuserdata, apiResponse)
-  else{
+  if(isArr){
     repoArr = apiResponse.map(entry=>{
-      const newrepoData = {...repoData};
+      const newrepoData : RepoData = {...repoData};
       return storeapidata(newrepoData, entry)
     })
   }
-  return type === 'main' ? newuserdata : repoArr
+  else storeapidata(newuserdata, apiResponse);
+
+  return isArr ? repoArr : newuserdata
   }

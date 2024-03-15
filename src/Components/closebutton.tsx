@@ -1,8 +1,10 @@
 import { useContext } from "react"
 import { userContext } from "../App"
 import { useDispatch } from "react-redux";
+//@ts-ignore
 import { resetStore } from "../ReduxStore/Userslice"
 import { timeout } from "../helperfns/timeout";
+import { context } from "../types";
 
 
 export const Closebtn = ()=>{
@@ -14,23 +16,27 @@ export const Closebtn = ()=>{
         setInput2,
         timeoutID,
         timer
-    } = useContext(userContext);
+    } = useContext<context>(userContext);
     const dispatch = useDispatch();
-    const closeBtn = document.querySelector('.close_btn');
-    const closeText = document.querySelector('.closebtn_txt');
+    const closeBtn : HTMLButtonElement | null = document.querySelector('.close_btn');
+    const closeText : HTMLSpanElement | null = document.querySelector('.closebtn_txt');
 
     closeBtn?.addEventListener('mouseover', () => {
-        closeText.style.opacity = 1;
-        closeText.style.transform = 'translateX(0)';
+        if(closeText !== null && closeText !== undefined){
+            closeText.style.opacity = '1';
+            closeText.style.transform = 'translateX(0)';
+        }
     });
 
     closeBtn?.addEventListener('mouseout', () => {
-        closeText.style.opacity = 0;
-        closeText.style.transform = 'translateX(60px)';
+        if(closeText !== null && closeText !== undefined){
+            closeText.style.opacity = '0';
+            closeText.style.transform = 'translateX(60px)';
+        }
     });
 
     function clearallIntervals(){
-        timeoutID.current.map(id=>{
+        timeoutID.current.map((id:number)=>{
             clearTimeout(id);
         }) 
     }

@@ -4,10 +4,11 @@ import BusinessIcon from '@mui/icons-material/Business';
 import MapIcon from '@mui/icons-material/Map';
 import { useSelector } from "react-redux";
 import { Closebtn } from "./closebutton";
-import emptyprofile from "../assets/emptyprofile.jpg"
+import emptyprofile from "../assets/emptyprofile.jpg";
+import { RootState } from "../types";
 
 export const UsercardComponent = ()=>{
-    const userSelector = useSelector(state=>state.user.userRandomValue);
+    const userSelector = useSelector((state:RootState)=>state.user.userRandomValue);
     
     return <div className="usercard_container">
         <section className="details_section">

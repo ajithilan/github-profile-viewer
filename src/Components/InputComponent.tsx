@@ -1,10 +1,11 @@
-import { useEffect, useState, useRef, MutableRefObject } from "react";
+import { useEffect, useRef } from "react";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { useContext } from "react";
 import { userContext } from "../App";
 import { LoadingComponent } from "./loadingcomp";
 import { fetchUserDetails } from "../helperfns/fetchuserdetails";
 import { useSelector } from "react-redux";
+import { RootState, context } from "../types";
 
 export const InputComponent = ()=>{
     const {
@@ -26,9 +27,9 @@ export const InputComponent = ()=>{
         timer,
         timeoutID,
         inc
-    } = useContext(userContext);
-    const userselector = useSelector(state=>state.user.userInitialValue);
-    const reposelector = useSelector(state=>state.user.repoInitialValue);
+    } = useContext<context>(userContext);
+    const userselector = useSelector((state:RootState)=>state.user.userInitialValue);
+    const reposelector = useSelector((state:RootState)=>state.user.repoInitialValue);
     const args = {
         dispatch,
         userselector,
@@ -47,53 +48,63 @@ export const InputComponent = ()=>{
         timeoutID,
         inc
     }
-    const [focus, setFocus] = useState<boolean>(false);
-    const clearIntervalID : MutableRefObject<number | undefined> = useRef();
+    const clearIntervalID = useRef<number|null>(null);
     let newusername : string[];
+    const inputAccess = useRef<HTMLInputElement>(null);
 
     const handleUsername = (e:React.ChangeEvent<HTMLInputElement>)=>{
         setUsername(e.target.value);
     }
 
-    useEffect(()=>{
-        function eventgrp(){
-            handleClearInterval();
-            setErrorDisplay(false);
-            return false
-        }
-        setFocus(username ? true : eventgrp());
-    },[username])
-
     function clearOneLetter(){
-        setUsername(prev=>{
+        setUsername((prev:string)=>{
             newusername = Array.from(prev);
             newusername.pop();
             return newusername.join('')
         });
     }
 
+    const handleClearInterval = (clr:boolean=false)=>{
+        if(clearIntervalID.current){
+            setTimeout(() =>{
+                clearIntervalID.current && clearInterval(clearIntervalID.current);
+                clearIntervalID.current = null;
+                clr && clearOneLetter();
+            }, 151);
+        }
+    }
+
     const handleClearusername = ()=>{
-        clearIntervalID.current = setInterval(()=>{
-            username && clearOneLetter();
-        },120)
+        inputAccess.current?.focus();
+        if(!clearIntervalID.current){
+            clearIntervalID.current = setInterval(()=>{
+            clearOneLetter();
+            setErrorDisplay(false);
+        },150);
+        }else handleClearInterval(true);
     }
 
-    const handleClearInterval = ()=>{
-        setTimeout(() => {
-                clearInterval(clearIntervalID.current);
-        }, 130);
-    }
+    useEffect(()=>{
+        !username && (
+            handleClearInterval(),
+            inputAccess.current?.blur()
+            );
+    },[username])
 
-    const handleSubmit = async (e)=>{
+    const handleSubmit = async (e:React.KeyboardEvent<HTMLInputElement>)=>{
         (!submit && e.key === 'Enter') && fetchUserDetails(args);
     }
 
-    return <div className={"input_container " + (input2 ? "mount" : null)}>
+    const handleFocus = ()=>{
+        username && inputAccess.current?.focus();
+    }
+
+    return <div className={"input_container " + (input2 && "mount")}>
         <div className="input_component">
-            <input type="text" className={"ghUsername_input " + (focus && "focus")} placeholder="Github username" onChange={handleUsername} value={username} onKeyDown={handleSubmit}/>
-            {username && <button className="clear_input" onMouseDown={handleClearusername} onMouseUp={handleClearInterval}><ArrowBackIosNewIcon sx={{'fontSize':'16px'}}/></button>}
+            <input ref={inputAccess} type="text" className="ghUsername_input" placeholder="Github username" onBlur={handleFocus} onChange={handleUsername} value={username} onKeyDown={handleSubmit}/>
+            {username && <button className="clear_input" onMouseDown={handleClearusername} onMouseUp={()=>handleClearInterval(false)}><ArrowBackIosNewIcon sx={{'fontSize':'16px'}}/></button>}
         </div>
-        <div className={"error "+ (errorDisplay ? "display" : "")}>Username does not exist</div>
+        <div className={"error "+ (errorDisplay && "display")}>Username does not exist</div>
         {loading && <LoadingComponent/>}
     </div>
 }

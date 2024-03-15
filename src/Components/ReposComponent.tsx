@@ -2,12 +2,14 @@ import { useContext, useEffect, useRef, useState } from "react";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+//@ts-ignore
 import { updateRepoInitialValue } from "../ReduxStore/Userslice";
 import { userContext } from "../App";
 import { repoFetch } from "../helperfns/repoFetch";
 import { repoToggle } from "../helperfns/repotoggle";
 import { updateInitialStoreValue } from "../helperfns/updateInitialStoreValue";
 import { initialDispatch } from "../helperfns/initialDispatch";
+import { RootState, context } from "../types";
 
 export const ReposComponent = ()=>{
     const {
@@ -20,12 +22,12 @@ export const ReposComponent = ()=>{
         timeoutID,
         timer,
         inc
-    } = useContext(userContext);
+    } = useContext<context>(userContext);
     const dispatch = useDispatch();
     const args = {dispatch, userselector, reposelector, repoDetails, timeoutID, timer, inc};
-    const repoInitialSelector = useSelector(state=>state.user.repoInitialValue);
-    const repoRandomSelector = useSelector(state=>state.user.repoRandomValue);
-    const moreRepoFetched = useRef(false);
+    const repoInitialSelector = useSelector((state:RootState)=>state.user.repoInitialValue);
+    const repoRandomSelector = useSelector((state:RootState)=>state.user.repoRandomValue);
+    const moreRepoFetched = useRef<boolean>(false);
     let subRepo;
     const [repoBtnDisabled, setRepoBtnDisabled] = useState<boolean>(repoCount.current < 5 ? true : false);
     const repostyle = {
@@ -35,7 +37,7 @@ export const ReposComponent = ()=>{
         flexDirection:'column',
         width:'fit-content'
     }
-    const langColors : {[key:string] : string}= {
+    const langColors : {[key:string] : string} = {
         'HTML':'orange',
         'CSS':'blue',
         'JavaScript':'yellow',
@@ -44,8 +46,12 @@ export const ReposComponent = ()=>{
         '-':'white'
     }
 
-    const toggleRepoDetail = (e)=>{
-        repoToggle(args, e.currentTarget.parentElement.dataset.id);
+    const toggleRepoDetail = (e : React.SyntheticEvent<Element, Event>)=>{
+        repoToggle(args, repoDetails, e.currentTarget.parentElement?.dataset.id);
+    }
+
+    interface APIresponse {
+        [key:string] : any;
     }
 
     function fetchMoreRepos(){
@@ -54,10 +60,10 @@ export const ReposComponent = ()=>{
         newRepoData
         .then(response=>response.json())
         .then(data=>{
-            const filteredData = data.filter(obj=>{
+            const filteredData = data.filter((obj: APIresponse)=>{
                 return !(Object.keys(repoInitialSelector).includes(obj.node_id))
             })
-            dispatch(updateRepoInitialValue([updateInitialStoreValue('repo', filteredData, repoDetails), null]));
+            dispatch(updateRepoInitialValue([updateInitialStoreValue(filteredData, repoDetails), null]));
             moreRepoFetched.current = true;
         });
     }

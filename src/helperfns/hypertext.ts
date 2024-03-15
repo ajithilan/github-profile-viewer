@@ -1,20 +1,25 @@
+type Hyper = {
+  j: number;
+  text: string;
+  len: number;
+  firstBatch: boolean;
+}
 
-
-export function hyperText(j=-1, text='', len, firstBatch=false){
+export function hyperText({j=-1, text='', len, firstBatch=false} : Hyper){
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let k;
-    let processedText = firstBatch ? '' : text;
+    let processedData : string | number = firstBatch ? '' : text;
     
     if(typeof text === 'string'){
-      for(k=j+1;k<len;k++) processedText = processedText + letters[Math.floor(Math.random()*26)];
+      for(k=j+1;k<len;k++) processedData = processedData + letters[Math.floor(Math.random()*26)];
     }
     else{
       if(firstBatch){
-        processedText = '-';
+        processedData = '-';
       }
       else{
-        for(k=j+1;k<len;k++) processedText = parseInt(processedText + (Math.floor(Math.random()*10)).toString());
+        for(k=j+1;k<len;k++) processedData = parseInt(processedData + (Math.floor(Math.random()*10)).toString());
       }
     }
-    return processedText;
+    return processedData;
   }

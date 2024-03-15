@@ -6,13 +6,46 @@ import { createContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initialDispatch } from "./helperfns/initialDispatch";
 import { timeout } from "./helperfns/timeout";
+import { RootState, RepoDetails, context } from "./types";
 
-export const userContext = createContext(null);
+const initialContext = {
+  dispatch: ()=>{},
+  userselector: {},
+  reposelector: {},
+  username: '',
+  setUsername: ()=>{},
+  submit: false,
+  setSubmit: ()=>{},
+  repoCount: {current: 0},
+  totalRepos: {current: 0},
+  repoDetails: {
+    hypered:false,
+    description:'',
+    forks_count:'',
+    homepage:'',
+    watchers_count:'',
+    html_url:''
+  },
+  setMountInput: ()=>{},
+  mountUserComp: false,
+  setMountUserComp: ()=>{},
+  input2: false,
+  setInput2: ()=>{},
+  timer: {current: 0},
+  timeoutID: {current: []},
+  inc: {current: 0},
+  loading: false,
+  setLoading: ()=>{},
+  errorDisplay: false,
+  setErrorDisplay: ()=>{}
+}
+
+export const userContext = createContext<context>(initialContext);
 
 function App() {
   const dispatch = useDispatch();
-  const userselector = useSelector(state=>state.user.userInitialValue);
-  const reposelector = useSelector(state=>state.user.repoInitialValue);
+  const userselector = useSelector((state:RootState)=>state.user.userInitialValue);
+  const reposelector = useSelector((state:RootState)=>state.user.repoInitialValue);
   const [username, setUsername] = useState<string>('');
   const [submit, setSubmit] = useState<boolean>(false);
   const [mountInput, setMountInput] = useState<boolean>(true);
@@ -24,11 +57,8 @@ function App() {
   const inc = useRef(0);
   const timer = useRef(0);
   const timeoutID = useRef([]);
-  const totalRepos = useRef<number>(null);
-  type RD = {
-    [key : string] : string | Boolean
-  }
-  const repoDetails : RD = {
+  const totalRepos = useRef<number>(0);//changed from null to 0
+  const repoDetails : RepoDetails = {
     hypered:false,
     description:'',
     forks_count:'',
@@ -74,10 +104,6 @@ function App() {
     }
     submit && mountUserCard();
   },[submit])
-
-  // useEffect(()=>{
-  //   console.log(reposelector)
-  // },[reposelector])
 
   return <div className="App">
     <userContext.Provider value={contextValues}>
