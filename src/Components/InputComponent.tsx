@@ -91,8 +91,17 @@ export const InputComponent = ()=>{
             );
     },[username])
 
-    const handleSubmit = async (e:React.KeyboardEvent<HTMLInputElement>)=>{
-        (!submit && e.key === 'Enter') && fetchUserDetails(args);
+    const handleSubmit = (e:React.KeyboardEvent<HTMLInputElement>)=>{
+        if(!submit){
+            switch (e.key) {
+                case 'Enter':
+                    fetchUserDetails(args);
+                    break;
+                case 'Backspace':
+                    setErrorDisplay(false);
+                    break;
+            }
+        }
     }
 
     const handleFocus = ()=>{
