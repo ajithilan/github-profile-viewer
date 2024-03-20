@@ -57,7 +57,7 @@ function App() {
   const inc = useRef(0);
   const timer = useRef(0);
   const timeoutID = useRef([]);
-  const totalRepos = useRef<number>(0);//changed from null to 0
+  const totalRepos = useRef<number>(0);
   const repoDetails : RepoDetails = {
     hypered:false,
     description:'',

@@ -4,9 +4,10 @@ import { intervalCycle } from "./intervalCycle";
 import { params } from "../types";
 
 export function initialDispatch(param: params, firstBatch:boolean, newRepo=false){
-    const { userselector, reposelector, timer } = param;
+    const { reposelector, timer } = param;
 
     function initialUserDispatch(){
+      const { userselector } = param;
       const userkeystopass = Object.keys(userselector);
       const AddtParam = {
         method: updateUserRandomValue,

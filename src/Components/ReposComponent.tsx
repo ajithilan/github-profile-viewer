@@ -35,7 +35,8 @@ export const ReposComponent = ()=>{
         borderRadius:'8px !important',
         display:'flex',
         flexDirection:'column',
-        width:'fit-content'
+        width:'100%',
+        boxSizing:'border-box'
     }
     const langColors : {[key:string] : string} = {
         'HTML':'orange',

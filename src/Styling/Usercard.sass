@@ -17,6 +17,7 @@ $ghFontColor : #ffffffe0
     text-transform: uppercase
     text-shadow: 0 0 6px white
     color: $ghFontColor
+    overflow: hidden
     scale: 10
     opacity: 0
     
@@ -98,12 +99,11 @@ $ghFontColor : #ffffffe0
 
 .repo_container
     display: flex
-    flex: 1
+    width: inherit
     flex-wrap: wrap
-    gap: 40px
+    gap: 30px
 
 .repo
-    min-width: 200px
     height: fit-content
     border: solid 1px grey
     padding: 10px 20px
@@ -116,16 +116,19 @@ $ghFontColor : #ffffffe0
 
 .repo_summary
     display: flex
+    width: 500px
     gap: 40px
     padding-right: 30px
     white-space: nowrap
 
 .repo_name
-    width: 300px
+    width: 500px
     overflow: hidden
     text-overflow: ellipsis
 
 .repo_main_lang
+    width: 200px
+    text-align: center
     background: none
 
     &.orange

@@ -27,7 +27,7 @@ export function intervalCycle(param: params, additionalParam: AddtParam){
       }
       const text = !(typeof keys === 'string') ?  selector[key] : selector[keys][key];
       const loopCount = firstBatch ? 1 : text?.toString().length;
-      let len: number = typeof text === 'string' ? text.length : text?.toString().length;
+      let len = typeof text === 'string' ? text.length : text?.toString().length;
       switch(key){
         case null : {
           !typeTruthy && dispatchLoop(param,{key,selectortxt:'-', method,len:0,subkey:'', firstBatch});
@@ -38,7 +38,8 @@ export function intervalCycle(param: params, additionalParam: AddtParam){
           else{
             for(let i=0; i<16;i++){
               const finalIteration: string|null = i === 15 ? selector[key] : null;
-              scrollProfile({dispatch, method : updateUserRandomValue, timer, finalIteration});
+              setTimeout(() => dispatch(method(['avatar_url', '', finalIteration ?? scrollProfile()])), 100 + timer.current);
+              timer.current += 100;
             }
           }
           break;
@@ -69,3 +70,7 @@ export function intervalCycle(param: params, additionalParam: AddtParam){
       inc.current = 0;
     }
   }
+
+  //before change
+  //try changing settimeout to setinterval in dispatchloop. and convert the keys, text from whatever to
+  //arrays. and inside setinterval u can increment index. and use array[index].

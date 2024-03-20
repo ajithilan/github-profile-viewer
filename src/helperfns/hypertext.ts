@@ -11,7 +11,7 @@ export function hyperText({j=-1, text='', len, firstBatch=false} : Hyper){
     let processedData : string | number = firstBatch ? '' : text;
     
     if(typeof text === 'string'){
-      for(k=j+1;k<len;k++) processedData = processedData + letters[Math.floor(Math.random()*26)];
+      for(k=j+1;k<len;k++) processedData += letters[Math.floor(Math.random()*26)];
     }
     else{
       if(firstBatch){
