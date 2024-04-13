@@ -112,6 +112,7 @@ export const InputComponent = ()=>{
         <div className="input_component">
             <input ref={inputAccess} type="text" className="ghUsername_input" placeholder="Github username" onBlur={handleFocus} onChange={handleUsername} value={username} onKeyDown={handleSubmit}/>
             {username && <button className="clear_input" onMouseDown={handleClearusername} onMouseUp={()=>handleClearInterval(false)}><ArrowBackIosNewIcon sx={{'fontSize':'16px'}}/></button>}
+            <span className="sample">For testing purpose use my github username - <b>ajithilan</b></span>
         </div>
         <div className={"error "+ (errorDisplay && "display")}>Username does not exist</div>
         {loading && <LoadingComponent/>}

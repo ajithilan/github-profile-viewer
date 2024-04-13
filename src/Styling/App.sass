@@ -59,6 +59,9 @@ body
         outline: none
         padding-left: 50px
 
+        & ~ .sample
+            left: -35px
+
         &::placeholder
             color: transparent
 
@@ -96,3 +99,12 @@ body
     top: 50px
     left: 45%
     color: rgb(199, 199, 199)
+
+.sample
+    position: absolute
+    left: -55px
+    bottom: 70px
+    color: whitesmoke
+    white-space: nowrap
+    opacity: .3
+    transition: left .3s

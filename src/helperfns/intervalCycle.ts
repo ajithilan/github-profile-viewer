@@ -70,7 +70,3 @@ export function intervalCycle(param: params, additionalParam: AddtParam){
       inc.current = 0;
     }
   }
-
-  //before change
-  //try changing settimeout to setinterval in dispatchloop. and convert the keys, text from whatever to
-  //arrays. and inside setinterval u can increment index. and use array[index].
