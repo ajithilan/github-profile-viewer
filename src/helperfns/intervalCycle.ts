@@ -16,57 +16,72 @@ interface AddtParam {
   firstBatch: boolean;
 }
 
-export function intervalCycle(param: params, additionalParam: AddtParam){
+export async function intervalCycle(param: params, additionalParam: AddtParam){
     const {dispatch, timer, inc} = param;
     const {method, type, selector, keys, subkey = [], repoDetail, firstBatch} = additionalParam;
     const typeTruthy = type === 'main';
 
-    for (let key of (typeTruthy ? keys : subkey)){
-      if(!firstBatch && !repoDetail){
-        if(type === 'repo' && !(key === 'name' || key === 'language')) continue
-      }
-      const text = !(typeof keys === 'string') ?  selector[key] : selector[keys][key];
-      const loopCount = firstBatch ? 1 : text?.toString().length;
-      let len = typeof text === 'string' ? text.length : text?.toString().length;
-      switch(key){
-        case null : {
-          !typeTruthy && dispatchLoop(param,{key,selectortxt:'-', method,len:0,subkey:'', firstBatch});
-          break;
+    return new Promise<void>(async (intervalResolve)=>{
+      for (let key of (typeTruthy ? keys : subkey)){
+        if(!firstBatch && !repoDetail){
+          if(type === 'repo' && !(key === 'name' || key === 'language')) continue
         }
-        case 'avatar_url' : {
-          if(firstBatch) dispatch(method(['avatar_url', '', emptyprofile]))
-          else{
-            for(let i=0; i<16;i++){
-              const finalIteration: string|null = i === 15 ? selector[key] : null;
-              setTimeout(() => dispatch(method(['avatar_url', '', finalIteration ?? scrollProfile()])), 100 + timer.current);
-              timer.current += 100;
-            }
+        const text = !(typeof keys === 'string') ?  selector[key] : selector[keys][key];
+        const loopCount = firstBatch ? 1 : text?.toString().length;
+        let len = typeof text === 'string' ? text.length : text?.toString().length;
+        switch(key){
+          case null : {
+            !typeTruthy && dispatchLoop(param,{key,selectortxt:'-', method,len:0,subkey:'', firstBatch});
+            break;
           }
-          break;
-        }
-        case 'node_id' : {
-          dispatch(method([keys, key, keys]));
-          break;
-        }
-        case 'semiHypered' : {
-          dispatch(updateRepoInitialValue([keys, 'semiHypered']));
-          break;
-        }
-        case 'hypered' : {
-          repoDetail && dispatch(updateRepoInitialValue([keys, 'hypered']));
-          break;
-        }
-        default : {
-          if(!(text === undefined)){
-            function loopContainer(key1:string, key2:string|string[]){
-              for(let i=0;i<loopCount;i++){
-                dispatchLoop(param,{key: key1, selectortxt: text, method, len, subkey: key2, firstBatch});
+          case 'avatar_url' : {
+            if(firstBatch) dispatch(method(['avatar_url', '', emptyprofile]))
+            else{
+              for(let i=0; i<16;i++){
+                const finalIteration: string|null = i === 15 ? selector[key] : null;
+                setTimeout(() => dispatch(method(['avatar_url', '', finalIteration ?? scrollProfile()])), 100 + timer.current);
+                if(i !== 15){
+                  timer.current += 100;
+                }else{
+                  setTimeout(() => {
+                    timer.current = 0;
+                  }, timer.current + 150);
+                }
               }
             }
-            typeTruthy ? loopContainer(key, keys) : (typeof keys === 'string' && loopContainer(keys, key));
+            break;
+          }
+          case 'node_id' : {
+            dispatch(method([keys, key, keys]));
+            break;
+          }
+          case 'semiHypered' : {
+            dispatch(updateRepoInitialValue([keys, 'semiHypered']));
+            break;
+          }
+          case 'hypered' : {
+            repoDetail && dispatch(updateRepoInitialValue([keys, 'hypered']));
+            break;
+          }
+          default : {
+            if(text !== undefined){
+              async function loopContainer(key1:string, key2:string|string[]){
+                return new Promise<void>(async res=>{
+                  for(let i=0;i<loopCount;i++){
+                    await dispatchLoop(param,{key: key1, selectortxt: text, method, len, subkey: key2, firstBatch});
+                  }
+                  res();
+                });
+              }
+              if(typeTruthy) await loopContainer(key, keys)
+              else{
+                if(typeof keys === 'string') await loopContainer(keys, key);
+              }
+            }
           }
         }
+        inc.current = 0;
       }
-      inc.current = 0;
-    }
+      intervalResolve();
+    });
   }

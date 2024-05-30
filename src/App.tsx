@@ -1,44 +1,12 @@
 import "./styling/App.sass"
-import { InputComponent } from "./Components/InputComponent"
-import { useEffect, useRef, useState } from "react";
-import { UsercardComponent } from "./Components/UsercardComponent"
-import { createContext } from "react";
+import { InputComponent } from "./Components/InputComponent";
+import { useEffect, useRef, useState, createContext } from "react";
+import { UsercardComponent } from "./Components/UsercardComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { initialDispatch } from "./helperfns/initialDispatch";
 import { timeout } from "./helperfns/timeout";
 import { RootState, RepoDetails, context } from "./types";
-
-const initialContext = {
-  dispatch: ()=>{},
-  userselector: {},
-  reposelector: {},
-  username: '',
-  setUsername: ()=>{},
-  submit: false,
-  setSubmit: ()=>{},
-  repoCount: {current: 0},
-  totalRepos: {current: 0},
-  repoDetails: {
-    hypered:false,
-    description:'',
-    forks_count:'',
-    homepage:'',
-    watchers_count:'',
-    html_url:''
-  },
-  setMountInput: ()=>{},
-  mountUserComp: false,
-  setMountUserComp: ()=>{},
-  input2: false,
-  setInput2: ()=>{},
-  timer: {current: 0},
-  timeoutID: {current: []},
-  inc: {current: 0},
-  loading: false,
-  setLoading: ()=>{},
-  errorDisplay: false,
-  setErrorDisplay: ()=>{}
-}
+import { initialContext } from './types/contextinitialvalues';
 
 export const userContext = createContext<context>(initialContext);
 
@@ -54,9 +22,11 @@ function App() {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorDisplay, setErrorDisplay] = useState<boolean>(false);
   const repoCount = useRef<number>(5);
+  const [repoBtnDisabled, setRepoBtnDisabled] = useState<boolean>(true);
+  const [repoBtnText, setRepoBtnText] = useState('Hypering... please wait');
+  const apiEmpty = useRef(false);
   const inc = useRef(0);
   const timer = useRef(0);
-  const timeoutID = useRef([]);
   const totalRepos = useRef<number>(0);
   const repoDetails : RepoDetails = {
     hypered:false,
@@ -84,14 +54,29 @@ function App() {
     input2,
     setInput2,
     timer,
-    timeoutID,
     inc,
     loading,
     setLoading,
     errorDisplay,
-    setErrorDisplay
+    setErrorDisplay,
+    repoBtnDisabled,
+    setRepoBtnDisabled,
+    repoBtnText,
+    setRepoBtnText,
+    apiEmpty
   }
-  const args = {dispatch, userselector, reposelector, timer, timeoutID, inc};
+  const args = {
+    dispatch,
+    userselector,
+    reposelector,
+    timer,
+    inc,
+    repoBtnDisabled,
+    setRepoBtnDisabled,
+    repoBtnText,
+    setRepoBtnText,
+    apiEmpty
+  };
 
   useEffect(()=>{
     function mountUserCard(){
@@ -105,12 +90,14 @@ function App() {
     submit && mountUserCard();
   },[submit])
 
-  return <div className="App">
-    <userContext.Provider value={contextValues}>
-      {mountInput && <InputComponent/>}
-      {mountUserComp && <UsercardComponent/>}
-    </userContext.Provider>
-  </div>
+  return (
+    <div className="App">
+      <userContext.Provider value={contextValues}>
+        { mountInput && <InputComponent/> }
+        { mountUserComp && <UsercardComponent/> }
+      </userContext.Provider>
+    </div>
+  )
 }
 
 export default App

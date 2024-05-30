@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const Userslice = createSlice({
     name:'user',
-    initialState:{
+    initialState: {
         userInitialValue : {},
         userRandomValue : {},
         repoInitialValue : {},
@@ -54,10 +54,13 @@ const Userslice = createSlice({
             const data = action.payload[2];
             let tempObj = (Object.keys(state.repoRandomValue)).length === 0 ? {} : {...state.repoRandomValue};
             if(key in tempObj) tempObj[key][subkey] = data;
-            else {tempObj[key] = {}, tempObj[key][subkey]=data};
+            else {
+                tempObj[key] = {},
+                tempObj[key][subkey]=data
+            };
             state.repoRandomValue = {...tempObj};
         },
-        resetStore:(state, action)=>{
+        resetStore:(state)=>{
             state.userInitialValue = {};
             state.userRandomValue = {};
             state.repoInitialValue = {};

@@ -14,35 +14,15 @@ export const Closebtn = ()=>{
         setMountUserComp,
         setMountInput,
         setInput2,
-        timeoutID,
-        timer
+        timer,
+        repoCount,
+        setRepoBtnDisabled,
+        setRepoBtnText,
+        apiEmpty
     } = useContext<context>(userContext);
     const dispatch = useDispatch();
-    const closeBtn : HTMLButtonElement | null = document.querySelector('.close_btn');
-    const closeText : HTMLSpanElement | null = document.querySelector('.closebtn_txt');
-
-    closeBtn?.addEventListener('mouseover', () => {
-        if(closeText !== null && closeText !== undefined){
-            closeText.style.opacity = '1';
-            closeText.style.transform = 'translateX(0)';
-        }
-    });
-
-    closeBtn?.addEventListener('mouseout', () => {
-        if(closeText !== null && closeText !== undefined){
-            closeText.style.opacity = '0';
-            closeText.style.transform = 'translateX(60px)';
-        }
-    });
-
-    function clearallIntervals(){
-        timeoutID.current.map((id:number)=>{
-            clearTimeout(id);
-        }) 
-    }
 
     const closeUserCard = ()=>{
-        clearallIntervals();
         timer.current = 0;
         setUsername('');
         timeout(setMountInput, true, 0);
@@ -52,11 +32,17 @@ export const Closebtn = ()=>{
         timeout(null, null, 0, '.usercard_container', 'remove', 'mount');
         timeout(setMountUserComp, false, 1500);
         setTimeout(() => dispatch(resetStore('')), 1500);
+        repoCount.current = 5;
+        setRepoBtnText('Hypering... please wait');
+        setRepoBtnDisabled(true);
+        apiEmpty.current = false;
         setSubmit(false);
     }
 
-    return <>
-        <span className="closebtn_txt">close</span>
-        <button className="close_btn" onClick={closeUserCard}></button>
-    </>
+    return (
+        <div className="closebtn_container">
+            <span className="closebtn_txt">close</span>
+            <button className="close_btn" onClick={closeUserCard}></button>
+        </div>
+    )
 }

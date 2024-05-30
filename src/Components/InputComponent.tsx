@@ -1,6 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useContext } from "react";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { useContext } from "react";
 import { userContext } from "../App";
 import { LoadingComponent } from "./loadingcomp";
 import { fetchUserDetails } from "../helperfns/fetchuserdetails";
@@ -25,7 +24,6 @@ export const InputComponent = ()=>{
         errorDisplay,
         setErrorDisplay,
         timer,
-        timeoutID,
         inc
     } = useContext<context>(userContext);
     const userselector = useSelector((state:RootState)=>state.user.userInitialValue);
@@ -45,7 +43,6 @@ export const InputComponent = ()=>{
         setMountUserComp,
         setErrorDisplay,
         timer,
-        timeoutID,
         inc
     }
     const clearIntervalID = useRef<number|null>(null);
@@ -81,14 +78,15 @@ export const InputComponent = ()=>{
             clearOneLetter();
             setErrorDisplay(false);
         },150);
-        }else handleClearInterval(true);
+        }
+        else handleClearInterval(true);
     }
 
     useEffect(()=>{
-        !username && (
-            handleClearInterval(),
-            inputAccess.current?.blur()
-            );
+        if(!username){
+            handleClearInterval();
+            inputAccess.current?.blur();
+        }
     },[username])
 
     const handleSubmit = (e:React.KeyboardEvent<HTMLInputElement>)=>{
@@ -108,13 +106,33 @@ export const InputComponent = ()=>{
         username && inputAccess.current?.focus();
     }
 
-    return <div className={"input_container " + (input2 && "mount")}>
-        <div className="input_component">
-            <input ref={inputAccess} type="text" className="ghUsername_input" placeholder="Github username" onBlur={handleFocus} onChange={handleUsername} value={username} onKeyDown={handleSubmit}/>
-            {username && <button className="clear_input" onMouseDown={handleClearusername} onMouseUp={()=>handleClearInterval(false)}><ArrowBackIosNewIcon sx={{'fontSize':'16px'}}/></button>}
-            <span className="sample">For testing purpose use my github username - <b>ajithilan</b></span>
+    return (
+        <div className={`input_container ${input2 && "mount"}`}>
+            <div className="input_component">
+                <input
+                ref={inputAccess}
+                type="text"
+                className="ghUsername_input"
+                placeholder="Github username"
+                onBlur={handleFocus}
+                onChange={handleUsername}
+                value={username}
+                onKeyDown={handleSubmit}
+                />
+                {
+                    username
+                        && <button
+                            className="clear_input"
+                            onMouseDown={handleClearusername}
+                            onMouseUp={()=>handleClearInterval(false)}
+                            >
+                                <ArrowBackIosNewIcon sx={{'fontSize':'16px'}}/>
+                            </button>
+                }
+                <span className="sample">For testing purpose use my github username - <b>ajithilan</b></span>
+            </div>
+            <div className={"error "+ (errorDisplay && "display")}>Username does not exist</div>
+            { loading && <LoadingComponent/> }
         </div>
-        <div className={"error "+ (errorDisplay && "display")}>Username does not exist</div>
-        {loading && <LoadingComponent/>}
-    </div>
+    )
 }

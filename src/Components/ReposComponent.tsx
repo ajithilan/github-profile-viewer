@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,17 +19,30 @@ export const ReposComponent = ()=>{
         username,
         repoCount,
         totalRepos,
-        timeoutID,
         timer,
-        inc
+        inc,
+        repoBtnDisabled,
+        setRepoBtnDisabled,
+        repoBtnText,
+        setRepoBtnText,
+        apiEmpty
     } = useContext<context>(userContext);
     const dispatch = useDispatch();
-    const args = {dispatch, userselector, reposelector, repoDetails, timeoutID, timer, inc};
+    const args = {
+        dispatch,
+        userselector,
+        reposelector,
+        repoDetails,
+        timer,
+        inc,
+        setRepoBtnDisabled,
+        repoBtnText,
+        setRepoBtnText,
+        apiEmpty
+    };
     const repoInitialSelector = useSelector((state:RootState)=>state.user.repoInitialValue);
     const repoRandomSelector = useSelector((state:RootState)=>state.user.repoRandomValue);
     const moreRepoFetched = useRef<boolean>(false);
-    let subRepo;
-    const [repoBtnDisabled, setRepoBtnDisabled] = useState<boolean>(repoCount.current < 5 ? true : false);
     const repostyle = {
         backgroundColor:'rgba(0, 0, 0, 0.3)',
         borderRadius:'8px !important',
@@ -43,7 +56,7 @@ export const ReposComponent = ()=>{
         'CSS':'blue',
         'JavaScript':'yellow',
         'TypeScript':'green',
-        'python':'green',
+        'python':'red',
         '-':'white'
     }
 
@@ -65,6 +78,8 @@ export const ReposComponent = ()=>{
                 return !(Object.keys(repoInitialSelector).includes(obj.node_id))
             })
             dispatch(updateRepoInitialValue([updateInitialStoreValue(filteredData, repoDetails), null]));
+            setRepoBtnText('Hypering... please wait');
+            setRepoBtnDisabled(true);
             moreRepoFetched.current = true;
         });
     }
@@ -72,50 +87,57 @@ export const ReposComponent = ()=>{
     const handleRepoFetch = ()=>{
         const count = repoCount.current;
         const total = totalRepos.current;
-        !repoBtnDisabled && (
-            fetchMoreRepos(),
-            ((count + 5) > total) &&
-            setTimeout(() => {
-                document.querySelector('.more_repo_btn')?.setAttribute('disabled', 'true');
-                setRepoBtnDisabled(true);
-            }, 300)
-        )
+        if(!repoBtnDisabled){
+            fetchMoreRepos();
+            if((count + 5) > total){
+                setTimeout(() => {
+                    apiEmpty.current = true;
+                }, 300)
+            }
+        }
     }
 
     useEffect(()=>{
-        moreRepoFetched.current && (
-            initialDispatch(args, true, true),
-            initialDispatch(args, false, true),
-            moreRepoFetched.current = false
-        );
+        if(moreRepoFetched.current){
+            initialDispatch(args, true, true);
+            initialDispatch(args, false, true);
+            moreRepoFetched.current = false;
+        }
     },[moreRepoFetched.current])
 
-    return <>
+    return (
+        <>
             <div className="repo_container">
-                {Object.keys(repoRandomSelector).map((key)=>{
-                    subRepo = repoRandomSelector[key];
-                    return <Accordion className="repo" data-id={subRepo.node_id} onChange={toggleRepoDetail} sx={repostyle} key={subRepo.node_id}>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{color:'whitesmoke'}}/>}>
-                                <div className="repo_summary">
-                                    <span className="repo_name">{subRepo.name}</span>
-                                    <span className={'repo_main_lang ' + (langColors[subRepo.language] ?? 'pink')}>{subRepo.language && `[ ${subRepo.language} ]`}</span>
-                                </div>
-                            </AccordionSummary>
-                            <AccordionDetails className="repo_details" sx={{display:'flex', flexDirection:'column', gap:'10px'}}>
-                                <p className="repo_detail">{subRepo.description}</p>
-                                <span className="repo_detail">forks : {subRepo.forks_count}</span>
-                                <span>homepage : <a className="repo_detail" href={subRepo.homepage}>{subRepo.homepage}</a></span>
-                                <span className="repo_detail">watchers : {subRepo.watchers_count}</span>
-                                <span>source : <a className="repo_detail" href={subRepo.html_url}>{subRepo.html_url}</a></span>
-                            </AccordionDetails>
-                    </Accordion>
-                })}
+                {
+                    Object.keys(repoRandomSelector).map(key => {
+                        const { node_id, name, language, description, forks_count, homepage, watchers_count, html_url } = repoRandomSelector[key];
+
+                        return (
+                            <Accordion className="repo" data-id={node_id} onChange={toggleRepoDetail} sx={repostyle} key={node_id}>
+                                    <AccordionSummary expandIcon={<ExpandMoreIcon className="accordion_expand_btn"/>}>
+                                        <div className="repo_summary">
+                                            <span className="repo_name">{name}</span>
+                                            <span className={`repo_main_lang ${langColors[language] ?? 'pink'}`}>{language && `[ ${language} ]`}</span>
+                                        </div>
+                                    </AccordionSummary>
+                                    <AccordionDetails className="repo_details">
+                                        <p>{description}</p>
+                                        <span>forks : {forks_count}</span>
+                                        <span>homepage : <a href={homepage}>{homepage}</a></span>
+                                        <span>watchers : {watchers_count}</span>
+                                        <span>source : <a href={html_url}>{html_url}</a></span>
+                                    </AccordionDetails>
+                            </Accordion>
+                        )
+                    })
+                }
             </div>
             <div className="more_repo_container">
                 <button className="more_repo_btn" onClick={handleRepoFetch} disabled={repoBtnDisabled}>
-                    <span>{repoBtnDisabled ? 'no more repos' : 'more'}</span>
+                    <span>{repoBtnText}</span>
                     <ExpandMoreIcon className="expand_btn"/>
                 </button>
             </div>
-            </>
+        </>
+    )
 }

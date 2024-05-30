@@ -16,8 +16,11 @@ interface params{
     userselector: UserData;
     reposelector: RepoSelector;
     timer: MutableRefObject<number>;
-    timeoutID: MutableRefObject<number[]>;
     inc: MutableRefObject<number>;
+    setRepoBtnDisabled: React.Dispatch<SetStateAction<boolean>>;
+    repoBtnText: string;
+    setRepoBtnText: React.Dispatch<SetStateAction<string>>;
+    apiEmpty: MutableRefObject<boolean>;
   }
 
 interface RepoSelector {
@@ -41,28 +44,32 @@ type RepoDetails = {
 }
 
 interface context {
-dispatch: DispatchType;
-userselector: {};
-reposelector: {};
-username: string;
-setUsername: React.Dispatch<SetStateAction<string>>;
-submit: boolean;
-setSubmit: React.Dispatch<SetStateAction<boolean>>;
-repoCount: MutableRefObject<number>;
-totalRepos: MutableRefObject<number>;
-repoDetails: RepoDetails;
-setMountInput: React.Dispatch<SetStateAction<boolean>>;
-mountUserComp: boolean;
-setMountUserComp: React.Dispatch<SetStateAction<boolean>>;
-input2: boolean;
-setInput2: React.Dispatch<SetStateAction<boolean>>;
-timer: MutableRefObject<number>;
-timeoutID: MutableRefObject<number[]>;
-inc: MutableRefObject<number>;
-loading: boolean;
-setLoading: React.Dispatch<SetStateAction<boolean>>;
-errorDisplay: boolean;
-setErrorDisplay: React.Dispatch<SetStateAction<boolean>>;
+    dispatch: DispatchType;
+    userselector: {};
+    reposelector: {};
+    username: string;
+    setUsername: React.Dispatch<SetStateAction<string>>;
+    submit: boolean;
+    setSubmit: React.Dispatch<SetStateAction<boolean>>;
+    repoCount: MutableRefObject<number>;
+    totalRepos: MutableRefObject<number>;
+    repoDetails: RepoDetails;
+    setMountInput: React.Dispatch<SetStateAction<boolean>>;
+    mountUserComp: boolean;
+    setMountUserComp: React.Dispatch<SetStateAction<boolean>>;
+    input2: boolean;
+    setInput2: React.Dispatch<SetStateAction<boolean>>;
+    timer: MutableRefObject<number>;
+    inc: MutableRefObject<number>;
+    loading: boolean;
+    setLoading: React.Dispatch<SetStateAction<boolean>>;
+    errorDisplay: boolean;
+    setErrorDisplay: React.Dispatch<SetStateAction<boolean>>;
+    repoBtnDisabled: boolean;
+    setRepoBtnDisabled: React.Dispatch<SetStateAction<boolean>>;
+    repoBtnText: string;
+    setRepoBtnText: React.Dispatch<SetStateAction<string>>;
+    apiEmpty: MutableRefObject<boolean>;
 }
 
 

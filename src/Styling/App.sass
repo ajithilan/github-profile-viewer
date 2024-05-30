@@ -6,6 +6,7 @@ body
     font-size: 14px
     letter-spacing: 2px
     line-height: 1.8
+    background-color: #141414
     overflow: hidden
 
 .App
@@ -14,10 +15,10 @@ body
     flex-direction: column
     justify-content: center
     align-items: center
-    min-height: 100vh
-    height: fit-content
+    width: 100dvw
+    height: 100dvh
     gap: 50px
-    background-color: #141414
+
 
 .input_container
     position: absolute
@@ -36,7 +37,6 @@ body
 
 .input_component
     position: relative
-    background-color: transparent
     z-index: 2
 
 .ghUsername_input
@@ -106,5 +106,33 @@ body
     bottom: 70px
     color: whitesmoke
     white-space: nowrap
-    opacity: .3
+    opacity: .4
     transition: left .3s
+
+
+//Media queries
+
+@media (max-width: 420px)
+    .input_container
+        width: 100%
+        display: flex
+        align-items: center
+        flex-direction: column
+        box-sizing: border-box
+
+    .input_component
+        min-width: 80%
+ 
+    .ghUsername_input
+        width: 100%
+        box-sizing: border-box
+        &:focus
+            padding-left: 20px
+
+            & ~ .sample
+                left: 0
+
+    .sample
+        left: 0
+        text-align: center
+        white-space: normal
